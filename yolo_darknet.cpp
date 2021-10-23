@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <chrono>
 
+
 #include <opencv2/core.hpp>
 #include <opencv2/dnn.hpp>
 #include <opencv2/dnn/all_layers.hpp>
@@ -26,11 +27,17 @@ const cv::Scalar colors[] = {
 };
 const auto NUM_COLORS = sizeof(colors) / sizeof(colors[0]);
 
-int main()
-{
+int main(int argc, char **argv)
+{	
+	if (argc != 4){
+		std::cout<< " the input is wrong"<<std::endl;
+		std::cout<< " please use ./yolo_darknet yolo/coco.names yolo/yolov3.cfg yolo/yolov3.weights"<<std::endl;
+		return 0;
+	}
+	
 	std::vector<std::string> class_names;
 	{
-		std::ifstream class_file("yolo/coco.names");
+		std::ifstream class_file(argv[1]);
 		if (!class_file)
 		{
 			std::cerr << "failed to open classes.txt\n";
@@ -44,7 +51,7 @@ int main()
 
 	cv::VideoCapture source(0);  //
 	//cv::VideoCapture source("rtsp:/admin:Admin12345@192.168.0.61/Streaming/Channels/1");
-	auto net = cv::dnn::readNetFromDarknet("yolo/yolov3.cfg", "yolo/yolov3.weights");
+	auto net = cv::dnn::readNetFromDarknet(std::string(argv[2]), std::string(argv[3]));
 	net.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
 	net.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
 	//net.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
